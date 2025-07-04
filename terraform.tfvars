@@ -1,0 +1,6 @@
+client_name          = "cliente-a"
+environment          = "dev"
+aws_account_id       = "XXXXXXXXXXXX"
+oidc_role_name       = "GitHubTerraformAccessRole"
+bucket_name          = "terraform-state-cliente-a-dev"
+dynamodb_table_name  = "terraform-locks-cliente-a"
