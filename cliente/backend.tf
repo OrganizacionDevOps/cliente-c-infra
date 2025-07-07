@@ -3,6 +3,7 @@ module "backend" {
 
   client_name         = var.client_name
   environment         = var.environment
+  region              = var.region                  # 👈 SOLUCIÓN
   aws_account_id      = var.aws_account_id
   oidc_role_name      = var.oidc_role_name
   bucket_name         = var.bucket_name
