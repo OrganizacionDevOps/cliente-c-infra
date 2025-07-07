@@ -21,15 +21,25 @@ jobs:
       contents: read
 
     steps:
-      - name: 🧾 Clonar repo del cliente
+      - name: 📥 Checkout repositorio cliente
         uses: actions/checkout@v4
 
-      - name: 📦 Cargar variables desde .env si existe (opcional)
+      - name: 🔐 Cargar clave privada SSH para módulos
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY_MODULAR }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - name: 🌍 Cargar variables desde .env
         run: |
           if [ -f .env ]; then
             echo "Cargando variables desde .env..."
             export $(grep -v '^#' .env | xargs)
           fi
+
+
 
       - name: ☁️ Configurar credenciales AWS vía OIDC
         uses: aws-actions/configure-aws-credentials@v4
