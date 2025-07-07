@@ -3,7 +3,7 @@ name: Terraform Cliente-A
 on:
   push:
     paths:
-      - 'clients/cliente-c/infra/**'
+      - 'cliente/**'
   pull_request:
   workflow_dispatch:
 
