@@ -20,7 +20,7 @@ AWS_ACCOUNT_ID=$4
 OIDC_ROLE_NAME=$5
 WORKDIR="bootstrap-temp-${CLIENT}-${ENV}"
 
-MODULE_SOURCE="git@github.com:OrganizacionDevOps/OptimizApp_Infraestrucutra_Modular.git//modules/backend/aws?ref=main"
+MODULE_SOURCE="git::https://github.com/OrganizacionDevOps/OptimizApp_Infraestrucutra_Modular.git//modules/backend/aws?ref=main"
 
 # ─── Limpieza previa ─────────────────────────────────────────
 echo "🧹 Limpiando residuos anteriores..."
