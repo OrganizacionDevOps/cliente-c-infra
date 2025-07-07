@@ -3,7 +3,7 @@ name: Terraform Cliente-A
 on:
   push:
     paths:
-      - 'cliente/**'
+      - 'clients/cliente-c/infra/**'
   pull_request:
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: .
+        working-directory: cliente
 
     steps:
     - name: Checkout
