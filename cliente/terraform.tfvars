@@ -6,5 +6,4 @@ bucket_name          = "terraform-state-cliente-c-dev-239452641090"
 dynamodb_table_name  = "terraform-locks-cliente-c-dev-239452641090"
 region = "us-east-1"  # O la que corresponda
 vpc_cidr_block       = "10.0.0.0/16"
-enable_nat_gateway   = true
-enable_dns_support   = true
+kms_key_id          = "arn:aws:kms:us-east-1:239452641090:key/6ee662b0-3508-418e-a35b-5e9d9ced3222"
