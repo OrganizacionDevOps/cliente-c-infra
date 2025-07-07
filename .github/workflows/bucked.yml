@@ -1,50 +1,53 @@
-name: Terraform Cliente-A
+name: "Bootstrap Backend"
 
 on:
-  push:
-    paths:
-      - 'clients/cliente-c/infra/**'
-  pull_request:
-  workflow_dispatch:
+  workflow_dispatch:  # Se ejecuta manualmente
 
 jobs:
-  terraform:
+  bootstrap-backend:
+    name: "Inicializar Backend Terraform"
     runs-on: ubuntu-latest
+
+    env:
+      REGION: ${{ secrets.REGION }}
+      AWS_REGION: ${{ secrets.REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      OIDC_ROLE_NAME: ${{ secrets.OIDC_ROLE_NAME }}
+      CLIENT_NAME: ${{ secrets.CLIENT_NAME }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+
     permissions:
       id-token: write
       contents: read
 
-    defaults:
-      run:
-        working-directory: .
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: 🧾 Clonar repo del cliente
+        uses: actions/checkout@v4
 
-    - name: Export .env to GitHub Actions env
-      run: |
-        grep -v '^#' .env | xargs -d '\n' -I {} echo {} >> $GITHUB_ENV
+      - name: 📦 Cargar variables desde .env si existe (opcional)
+        run: |
+          if [ -f .env ]; then
+            echo "Cargando variables desde .env..."
+            export $(grep -v '^#' .env | xargs)
+          fi
 
-    - name: Configure AWS credentials (OIDC)
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.OIDC_ROLE_NAME }}
-        aws-region: ${{ env.REGION }}
+      - name: ☁️ Configurar credenciales AWS vía OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.OIDC_ROLE_NAME }}
+          aws-region: ${{ env.REGION }}
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.7
+      - name: 🛠️ Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
 
-    - name: Terraform Format
-      run: terraform fmt -check -recursive
-
-    - name: Terraform Init
-      run: terraform init
-
-    - name: Terraform Validate
-      run: terraform validate
-
-    - name: Terraform Plan
-      run: terraform plan -var-file="terraform.tfvars"
+      - name: 🔐 Ejecutar script de bootstrap
+        run: |
+          chmod +x ./bootstrap.sh
+          ./bootstrap.sh \
+            "$CLIENT_NAME" \
+            "$ENVIRONMENT" \
+            "$REGION" \
+            "$AWS_ACCOUNT_ID" \
+            "$OIDC_ROLE_NAME"
