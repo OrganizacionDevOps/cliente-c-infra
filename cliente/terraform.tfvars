@@ -5,3 +5,6 @@ oidc_role_name       = "GitHubTerraformAccessRole1"
 bucket_name          = "terraform-state-cliente-c-dev-239452641090"
 dynamodb_table_name  = "terraform-locks-cliente-c-dev-239452641090"
 region = "us-east-1"  # O la que corresponda
+vpc_cidr_block       = "10.0.0.0/16"
+enable_nat_gateway   = true
+enable_dns_support   = true
