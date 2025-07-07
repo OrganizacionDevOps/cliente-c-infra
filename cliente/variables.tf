@@ -6,19 +6,16 @@ variable "bucket_name" {}
 variable "dynamodb_table_name" {}
 variable "region" {}
 
-variable "vpc_cidr_block" {
-  description = "Bloque CIDR para la VPC"
-  type        = string
-}
+module "vpc" {
+  source        = "git::https://github.com/OrganizacionDevOps/OptimizApp_Infraestrucutra_Modular.git//modules/networking/vpc?ref=main"
+  
+  vpc_name      = "${var.client_name}-${var.environment}-vpc"
+  cidr_block    = var.vpc_cidr_block
+  environment   = var.environment
+  kms_key_id    = var.kms_key_id
 
-variable "enable_nat_gateway" {
-  description = "Habilita NAT Gateway (true/false)"
-  type        = bool
-  default     = false
-}
-
-variable "enable_dns_support" {
-  description = "Habilita soporte DNS"
-  type        = bool
-  default     = true
+  tags = {
+    Client      = var.client_name
+    Environment = var.environment
+  }
 }
