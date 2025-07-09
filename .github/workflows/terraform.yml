@@ -30,9 +30,17 @@ jobs:
       - name: 📥 Checkout repositorio cliente
         uses: actions/checkout@v4
 
-      - name: 🔐 Configurar acceso a módulos privados con PAT
+      - name: 🔐 Configurar acceso SSH a módulos privados
         run: |
-          git config --global url."https://${{ secrets.MODULAR_REPO_PAT }}@github.com/".insteadOf "https://github.com/"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: 📦 Configurar git para SSH
+        run: |
+          git config --global url."git@github.com:".insteadOf "https://github.com/"
+
 
       - name: 🌍 Cargar variables desde .env
         run: |
