@@ -1,5 +1,5 @@
 module "vpc" {
-  source        = "git::ssh://git@github.com/OrganizacionDevOps/OptimizApp_Infraestrucutra_Modular.git//modules/vpc?ref=main"
+  source        = "git::ssh://git@github.com/OrganizacionDevOps/OptimizApp_Infraestrucutra_Modular.git//modules/networking/vpc?ref=main"
   
   vpc_name      = "${var.client_name}-${var.environment}-vpc"
   cidr_block    = var.vpc_cidr_block
