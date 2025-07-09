@@ -30,7 +30,7 @@ jobs:
       - name: 📥 Checkout repositorio cliente
         uses: actions/checkout@v4
 
-      - name: 🔐 Configurar acceso SSH a módulos privados
+      - name: 🔐 Configurar acceso SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
