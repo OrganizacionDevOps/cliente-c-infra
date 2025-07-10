@@ -15,23 +15,41 @@ jobs:
         working-directory: ./cliente
 
     env:
-      REGION: us-east-1
-      ENVIRONMENT: dev
+      REGION: ${{ secrets.REGION }}
+      AWS_REGION: ${{ secrets.REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      OIDC_ROLE_NAME: ${{ secrets.OIDC_ROLE_NAME }}
+      CLIENT_NAME: ${{ secrets.CLIENT_NAME }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
 
     steps:
-      - name: 📥 Checkout cliente repo
+      - name: 📥 Checkout repo cliente
         uses: actions/checkout@v4
 
-      - name: 🔐 Configurar acceso SSH con bot
+      - name: 🔐 Configurar acceso SSH del bot (llave compartida por todos los clientes para leer módulos privados)
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: 🛠 Configurar git para SSH
+      - name: ⚙️ Configurar git para usar SSH en vez de HTTPS
         run: |
           git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - name: 🌍 Cargar variables locales desde .env (opcional)
+        run: |
+          if [ -f .env ]; then
+            echo "Cargando variables locales..."
+            export $(grep -v '^#' .env | xargs)
+          fi
+
+      - name: ☁️ Configurar credenciales AWS vía OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.OIDC_ROLE_NAME }}
+          aws-region: ${{ env.REGION }}
+
 
       - name: ☁️ Setup Terraform
         uses: hashicorp/setup-terraform@v2
