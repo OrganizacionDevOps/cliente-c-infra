@@ -2,7 +2,7 @@ module "sg" {
   source = "git::ssh://git@github.com/OrganizacionDevOps/Optimizapp_security_groups_module.git?ref=main"
 
   vpc_id      = var.vpc_id
-  sg_name     = "sg-app-${var.environment}"
+  sg_name     = "security-app-dev${var.environment}"
   environment = var.environment
 
   ingress_rules = [
