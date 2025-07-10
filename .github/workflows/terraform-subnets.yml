@@ -3,7 +3,7 @@ name: Terraform Subnets Module Test
 on:
   push:
     paths:
-      - 'infra/vpc-subnets.tf'
+      - 'cliente/**'
       - '.github/workflows/terraform-subnets.yml'
   workflow_dispatch:
 
