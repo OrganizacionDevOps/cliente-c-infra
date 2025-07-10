@@ -1,0 +1,48 @@
+name: Terraform Subnets Module Test
+
+on:
+  push:
+    paths:
+      - 'infra/vpc-subnets.tf'
+      - '.github/workflows/terraform-subnets.yml'
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
+
+    env:
+      REGION: us-east-1
+      ENVIRONMENT: dev
+
+    steps:
+      - name: 📥 Checkout cliente repo
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configurar acceso SSH con bot
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.BOT_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: 🛠 Configurar git para SSH
+        run: |
+          git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - name: ☁️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: 📦 Terraform Init
+        run: terraform init
+
+      - name: ✅ Terraform Validate
+        run: terraform validate
+
+      - name: 📋 Terraform Plan
+        run: terraform plan
