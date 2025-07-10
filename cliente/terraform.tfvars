@@ -19,4 +19,3 @@ availability_zones = [
   "us-east-1b"
 ]
 
-environment = "dev"
