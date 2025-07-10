@@ -1,0 +1,63 @@
+name: Terraform Cliente-X - SG
+
+on:
+  push:
+    paths:
+      - 'cliente/**'
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    defaults:
+      run:
+        working-directory: cliente
+
+    env:
+      REGION: ${{ secrets.REGION }}
+      AWS_REGION: ${{ secrets.REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      OIDC_ROLE_NAME: ${{ secrets.OIDC_ROLE_NAME }}
+      CLIENT_NAME: ${{ secrets.CLIENT_NAME }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+
+    steps:
+      - name: 📥 Checkout repo cliente
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configurar acceso SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: 📦 Configurar git para SSH
+        run: git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - name: ☁️ Configurar credenciales AWS vía OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.OIDC_ROLE_NAME }}
+          aws-region: ${{ env.REGION }}
+
+      - name: 🛠️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: 🧹 Terraform Format
+        run: terraform fmt -recursive
+
+      - name: 📦 Terraform Init
+        run: terraform init
+
+      - name: ✅ Terraform Validate
+        run: terraform validate
+
+      - name: 📋 Terraform Plan
+        run: terraform plan -var-file="terraform.tfvars"
