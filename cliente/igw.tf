@@ -1,5 +1,5 @@
 module "internet_gateway" {
-  source      = "git::ssh://git@github.com/ORG/Optimizapp_Internet_Gateway_module.git?ref=main"
+  source      = "git::ssh://git@github.com/ORG/Optimizapp_internet_Gateway_module.git?ref=main"
   
   vpc_id      = module.vpc.vpc_id
   client      = var.client
