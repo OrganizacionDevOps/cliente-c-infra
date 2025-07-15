@@ -22,3 +22,8 @@ variable "private_cidr_blocks" {
   description = "CIDR blocks para subnets privadas"
   type        = list(string)
 }
+
+variable "kms_key_arn" {
+  description = "ARN de la clave KMS para cifrado"
+  type        = string
+}
