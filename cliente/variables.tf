@@ -27,3 +27,7 @@ variable "kms_key_arn" {
   description = "ARN de la clave KMS para cifrado"
   type        = string
 }
+variable "project" {
+  description = "Nombre del proyecto o repositorio"
+  type        = string
+}
