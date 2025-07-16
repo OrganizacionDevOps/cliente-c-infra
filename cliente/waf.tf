@@ -1,11 +1,8 @@
 module "waf" {
-  source = "../modules/Optimizapp_waf_module"
+  source = "git::ssh://git@github.com/OrganizacionDevOps/Optimizapp_waf_module.git?ref=main"
 
-  name              = "waf-alb-cliente-c"
-  alb_arn           = module.alb.arn
-  allowed_countries = ["CO", "US"]
-  tags = {
-    Environment = "dev"
-    Owner       = "platform-team"
-  }
+  name               = "waf-app-${var.environment}"
+  alb_arn            = module.alb.arn
+  tags               = local.tags_common
+  allowed_countries  = ["CO", "US"]
 }
